@@ -1,0 +1,8 @@
+<div class="page-heading account-heading">
+    <h1>Account e impostazioni</h1>
+    <form method="post" action="{% url 'logout' %}" data-confirm="Vuoi uscire da Wallet?">
+        {% csrf_token %}<button class="button button-secondary" type="submit">Esci</button>
+    </form>
+</div>
+{% include "wallet/components/settings_nav.html" %}
+<div class="section-heading"><h2>{{ section_title }}</h2></div>

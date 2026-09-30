@@ -1,0 +1,44 @@
+{% extends "wallet/base.html" %}{% load wallet_tags %}{% block title %}Movimenti{% endblock %}{% block content %}
+<div class="page-heading"><div><h1>Movimenti</h1></div>{% include "wallet/components/new_button.html" %}</div>
+{% include "wallet/components/filters.html" %}
+<section class="panel"><div class="panel-heading register-toolbar"><div><h2>{{ page.paginator.count }} movimenti</h2></div><div class="toolbar-actions"><label class="mobile-sort"><span class="sr-only">Ordina movimenti</span><select data-sort-control><option value="-date">Data: recenti</option><option value="date">Data: meno recenti</option><option value="-amount">Importo: decrescente</option><option value="amount">Importo: crescente</option><option value="category">Categoria</option><option value="subcategory">Sottocategoria</option><option value="account">Conto</option><option value="kind">Tipo</option><option value="description">Descrizione</option><option value="-balance">Saldo conto</option></select></label><div class="segments"><a data-filter-link
+   href="{% query_url vista='tabella' pagina=1 %}"
+   class="{% if mode != 'lista' %}selected{% endif %}">Tabella</a><a data-filter-link
+   href="{% query_url vista='lista' pagina=1 %}"
+   class="{% if mode == 'lista' %}selected{% endif %}">Lista</a></div><label class="page-size"><span class="sr-only">Movimenti per pagina</span><select data-page-size>{% for n in page_sizes %}<option value="{{ n }}" {% if n == per_page %}selected{% endif %}>{{ n|capfirst }}{% if n != "tutti" %} per pagina{% endif %}</option>{% endfor %}</select></label><a class="button button-secondary button-small"
+   href="{% url 'export_csv' %}{{ request.get_full_path|cut:request.path }}">↓ CSV</a></div></div>
+    {% if mode == "lista" %}
+        <div class="movement-list-view">
+            {% for month in grouped_months %}<div class="month-summary"><div><h3>{{ month.label }}</h3><span>Entrate {{ month.income|euro }} · Uscite {{ month.outgoing|euro }}</span></div><strong aria-label="Differenza mensile">{{ month.net|euro }}</strong></div>
+            {% for day in month.days %}<div class="day-heading"><strong><time datetime="{{ day.date|date:'Y-m-d' }}">{{ day.date|date:'l, j F'|lower|capfirst }}</time></strong><span aria-label="Differenza giornaliera">{{ day.net|euro }}</span></div>{% for t in day.rows %}<article class="movement-row"><span class="movement-icon" style="--color:{{ t.category_color }}">{{ t.icon_glyph }}</span><div class="movement-info"><strong>{{ t.description|default:t.display_subcategory }}</strong><span>{{ t.display_category }}{% if t.is_transfer %} · {{ t.display_type }}{% elif t.display_subcategory != "—" %} · {{ t.display_subcategory }}{% endif %}</span><small>{{ t.account }}{% if t.is_transfer %} ↔ {{ t.counterparty }}{% endif %}</small></div><div class="movement-value {% if t.is_positive %}income-text{% endif %}"><strong>{% if t.is_positive %}+{% else %}−{% endif %} {{ t.amount|euro }}</strong></div></article>{% endfor %}{% endfor %}
+        {% empty %}<div class="empty-state"><span>≡</span><h3>Nessun movimento corrisponde ai filtri.</h3><p>Cambia il periodo o aggiungi un movimento.</p></div>{% endfor %}</div>
+{% else %}
+    <div class="table-wrap movement-table-view"
+         tabindex="0"
+         role="region"
+         aria-label="Tabella movimenti, scorrimento orizzontale">
+        <table class="movement-table">
+            <thead>
+                <tr>
+                    <th><a data-filter-link
+   href="{% if sort == '-date' %}{% query_url sort='date' %}{% else %}{% query_url sort='-date' %}{% endif %}">Data ↕</a></th><th><a data-filter-link
+   href="{% if sort == 'description' %}{% query_url sort='-description' %}{% else %}{% query_url sort='description' %}{% endif %}">Movimento ↕</a></th><th><a data-filter-link
+   href="{% if sort == 'category' %}{% query_url sort='-category' %}{% else %}{% query_url sort='category' %}{% endif %}">Categoria ↕</a></th><th><a data-filter-link
+   href="{% if sort == 'account' %}{% query_url sort='-account' %}{% else %}{% query_url sort='account' %}{% endif %}">Conto ↕</a></th><th><a data-filter-link
+   href="{% if sort == 'kind' %}{% query_url sort='-kind' %}{% else %}{% query_url sort='kind' %}{% endif %}">Tipo ↕</a></th><th class="numeric"><a data-filter-link
+   href="{% if sort == '-amount' %}{% query_url sort='amount' %}{% else %}{% query_url sort='-amount' %}{% endif %}">Importo ↕</a></th><th class="numeric"><a data-filter-link
+   href="{% if sort == '-balance' %}{% query_url sort='balance' %}{% else %}{% query_url sort='-balance' %}{% endif %}">Saldo conto ↕</a></th><th><span class="sr-only">Azioni</span></th></tr></thead><tbody>
+                    {% for t in page %}<tr><td data-label="Data">{{ t.date|date:'d/m/Y' }}</td><td data-label="Movimento"><strong>{{ t.description|default:t.display_subcategory }}</strong>{% if t.is_transfer %}<small>{% if t.is_positive %}{{ t.counterparty }} → {{ t.account }}{% else %}{{ t.account }} → {{ t.counterparty }}{% endif %}</small>{% endif %}</td><td data-label="Categoria"><span class="category-label"><i class="dot" style="--color:{{ t.category_color }}" aria-hidden="true"></i>{{ t.display_category }}</span><small>{{ t.display_subcategory }}</small></td><td data-label="Conto">{{ t.account }}</td><td data-label="Tipo"><span class="movement-type">{{ t.display_type }}</span></td><td data-label="Importo"
+    class="numeric strong {% if t.is_positive %}income-text{% endif %}">{% if t.is_positive %}+{% else %}−{% endif %} {{ t.amount|euro }}</td><td data-label="Saldo conto" class="numeric">{{ t.balance_after|euro }}</td><td class="row-actions"><a class="button button-quiet button-small"
+   href="{% if t.is_transfer %}{% url 'transfer_edit' t.uid %}{% else %}{% url 'transaction_edit' t.uid %}{% endif %}"
+   aria-label="Modifica {{ t.description }}">Modifica</a><form method="post"
+      action="{% if t.is_transfer %}{% url 'transfer_delete' t.uid %}{% else %}{% url 'transaction_delete' t.uid %}{% endif %}"
+      data-confirm="{% if t.is_transfer %}Eliminare il giroconto da entrambi i conti?{% else %}Eliminare questo movimento?{% endif %}">{% csrf_token %}<button class="icon-button danger"
+        aria-label="Elimina {{ t.description }}"
+        type="submit">×</button></form></td></tr>
+                {% empty %}<tr><td colspan="8" class="empty-inline">Nessun movimento corrisponde ai filtri.</td></tr>{% endfor %}</tbody></table></div>{% endif %}
+{% if page.paginator.num_pages > 1 %}<nav class="pagination" aria-label="Pagine movimenti">{% if page.has_previous %}<a data-filter-link
+   href="{% query_url pagina=page.previous_page_number %}"
+   class="button button-secondary button-small">← Precedente</a>{% endif %}<span>Pagina {{ page.number }} di {{ page.paginator.num_pages }} · {{ page.start_index }}–{{ page.end_index }}</span>{% if page.has_next %}<a data-filter-link
+   href="{% query_url pagina=page.next_page_number %}"
+   class="button button-secondary button-small">Successiva →</a>{% endif %}</nav>{% endif %}</section>{% endblock %}

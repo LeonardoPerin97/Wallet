@@ -1,0 +1,35 @@
+{% extends "wallet/base.html" %}
+{% block title %}Associa colonne{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Associa le colonne" %}
+    <div class="stepper">
+        <div class="step complete"><span>✓</span> Carica file</div>
+        <i></i>
+        <div class="step active"><span>2</span> Associa colonne</div>
+        <i></i>
+        <div class="step"><span>3</span> Controlla</div>
+        <i></i>
+        <div class="step"><span>4</span> Conferma</div>
+    </div>
+    <section class="panel table-panel"><div class="panel-heading"><div><h2>Anteprima · separatore rilevato «{{ delimiter }}»</h2></div><form method="post">{% csrf_token %}<button class="button button-quiet button-small" name="stage" value="clear">Annulla importazione</button></form></div><div class="table-wrap"><table class="preview-table"><thead><tr>{% for h in headers %}<th>{{ h|default:'(colonna senza nome)' }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for val in row %}<td>{{ val }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div></section>
+    <section class="panel form-panel"><div class="panel-heading"><div><h2>Mappatura dei campi</h2></div></div><form method="post" class="data-form" data-loading>{% csrf_token %}<input type="hidden" name="stage" value="analyze"><div class="mapping-grid">{% for f in fields_data %}<label>{{ f.label }}{% if f.key == "date" or f.key == "amount" %}<em class="required-star">*</em>{% endif %}<select name="map_{{ f.key }}"><option value="">— non presente —</option>{% for h in headers %}<option value="{{ forloop.counter0 }}"
+        {% if f.guess == forloop.counter0|stringformat:'s' %}selected{% endif %}>{{ h|default:'(senza nome)' }}</option>{% endfor %}</select></label>{% endfor %}</div>
+        <div class="form-grid">
+            <label class="field">
+                Formato data<select name="date_format">
+                <option value="">Rileva automaticamente</option>
+                <option value="%d/%m/%Y">gg/mm/aaaa</option>
+                <option value="%Y-%m-%d">aaaa-mm-gg</option>
+                <option value="%d-%m-%Y">gg-mm-aaaa</option>
+            </select></label><label class="field">Conto predefinito se non c’è la colonna<input name="default_account"
+       placeholder="Es. Carta principale">
+            </label>
+        </div>
+        <div class="notice notice-info">Gli importi del file possono essere positivi o avere un segno. In ogni caso vengono salvati come valore positivo e il tipo contabile viene ricavato dalla sottocategoria canonica. Se mappi una colonna di tipo, viene usata solo come controllo.</div>
+        <div class="form-actions">
+            <button class="button button-primary" type="submit">Analizza righe</button>
+        </div>
+        </form>
+    </section>
+{% endblock %}

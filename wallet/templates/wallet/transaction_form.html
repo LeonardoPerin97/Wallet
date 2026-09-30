@@ -1,0 +1,23 @@
+{% extends "wallet/base.html" %}
+{% block title %}{% if obj %}Modifica movimento{% else %}Nuovo movimento{% endif %}{% endblock %}
+{% block content %}
+<div class="page-heading"><h1>{% if obj %}Modifica movimento{% elif flow == "entrata" %}Nuova entrata{% elif flow == "uscita" %}Nuova uscita{% else %}Nuovo movimento{% endif %}</h1><a href="{% url 'transactions' %}" class="button button-secondary">← Movimenti</a></div>
+<section class="panel transaction-panel">
+    <form method="post" class="data-form" data-transaction-form>
+        {% csrf_token %}<input type="hidden" name="flusso" value="{{ flow }}">{{ form.non_field_errors }}
+        <div class="form-grid">
+            <div class="field full-field amount-entry"><label for="id_amount">Importo</label><div class="amount-control"><span aria-hidden="true">€</span>{{ form.amount }}</div>{{ form.amount.errors }}</div>
+            <div class="field">{{ form.date.label_tag }}{{ form.date }}{{ form.date.errors }}</div>
+            <div class="field">{{ form.account.label_tag }}{{ form.account }}{{ form.account.errors }}</div>
+            <div class="field full-field"><label id="category-label" for="id_category">Categoria</label><div class="choice-picker" data-choice-picker="category" data-choice-label="category-label">{{ form.category }}</div>{{ form.category.errors }}</div>
+            <div class="field full-field"><label id="subcategory-label" for="id_subcategory">Sottocategoria</label><div class="choice-picker" data-choice-picker="subcategory" data-choice-label="subcategory-label">{{ form.subcategory }}</div>{{ form.subcategory.errors }}<small data-derived-kind></small></div>
+            <fieldset class="field full-field expense-kind-field" data-expense-kind><legend>Tipo di uscita</legend>{{ form.expense_kind }}{{ form.expense_kind.errors }}</fieldset>
+            <div class="field full-field">{{ form.description.label_tag }}{{ form.description }}{{ form.description.errors }}</div>
+        </div>
+        <details class="optional-fields"><summary>Altri dettagli facoltativi</summary><div class="form-grid"><div class="field">{{ form.operation_time.label_tag }}{{ form.operation_time }}{{ form.operation_time.errors }}</div><div class="field">{{ form.external_id.label_tag }}{{ form.external_id }}{{ form.external_id.errors }}</div></div></details>
+        <div class="form-actions"><a class="button button-secondary" href="{% url 'transactions' %}">Annulla</a><button class="button button-primary" type="submit">Salva movimento</button></div>
+    </form>
+</section>
+{{ categories_data|json_script:'category-data' }}
+{{ subcategories_data|json_script:'subcategory-data' }}
+{% endblock %}

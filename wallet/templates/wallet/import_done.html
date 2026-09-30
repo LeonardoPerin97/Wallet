@@ -1,0 +1,14 @@
+{% extends "wallet/base.html" %}
+{% block title %}Importazione completata{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Riepilogo importazione" %}
+    {% if transfers %}<p>{{ transfers }} giroconti ricostruiti come operazioni collegate fra i due conti.</p>{% endif %}
+    <div class="kpi-grid four">
+        <article class="kpi"><span>Operazioni aggiunte</span><strong>{{ added }}</strong></article>
+        <article class="kpi"><span>Duplicati ignorati</span><strong>{{ duplicates }}</strong></article>
+        <article class="kpi"><span>Righe da correggere</span><strong>{{ to_fix }}</strong></article>
+        <article class="kpi"><span>Avvisi sui saldi</span><strong>{{ balance_warnings }}</strong></article>
+    </div>
+    <div class="button-row"><a class="button button-primary" href="{% url 'dashboard' %}">Vai alla Dashboard</a><a class="button button-secondary" href="{% url 'import' %}">Importa un altro file</a></div>
+{% endblock %}

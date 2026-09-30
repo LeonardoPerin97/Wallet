@@ -1,0 +1,50 @@
+{% extends "wallet/base.html" %}
+{% load wallet_tags %}
+{% block title %}Importa CSV Wallet{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Controlla le operazioni" %}
+    {% if import_error %}
+        <div class="notice notice-error" role="alert"><strong>Nessun dato salvato.</strong> {{ import_error }}</div>
+    {% else %}
+        <div class="kpi-grid four">
+            <article class="kpi"><span>Righe nel file</span><strong>{{ source_rows }}</strong></article>
+            <article class="kpi"><span>Movimenti nuovi</span><strong>{{ movements }}</strong></article>
+            <article class="kpi"><span>Giroconti nuovi</span><strong>{{ transfers }}</strong></article>
+            <article class="kpi"><span>Già presenti</span><strong>{{ duplicates }}</strong></article>
+        </div>
+        <section class="panel">
+            <p>I giroconti aggiornano sempre entrambi i conti, anche quando il CSV mostra una sola delle due righe perché esportato con un filtro.</p>
+            {% if single_legs %}<p><strong>{{ single_legs }} giroconti hanno una sola riga nel file:</strong> verrà ricostruito anche il movimento sul conto collegato.</p>{% endif %}
+            {% if new_accounts %}<p>Conti da creare, con il saldo iniziale indicato nel file: {{ new_accounts|join:", " }}.</p>{% endif %}
+            {% if new_categories or new_subcategories %}<p>Saranno create {{ new_categories }} categorie e {{ new_subcategories }} sottocategorie mancanti.</p>{% endif %}
+            {% if balance_warnings %}<p class="warning-text">Saldo iniziale diverso per {{ balance_accounts|join:", " }}. Verrà mantenuto il saldo iniziale già presente in Wallet.</p>{% endif %}
+            <p>Un’esportazione filtrata contiene soltanto le operazioni selezionate: importarla su un archivio vuoto non ricostruisce lo storico escluso né garantisce gli stessi saldi progressivi. Per ripristinare l’intero archivio usa il backup JSON.</p>
+        </section>
+        <section class="panel table-panel">
+            <div class="panel-heading">
+                <h2>Anteprima delle operazioni</h2>
+                <span>{{ rows|length }} di {{ operation_count }} operazioni</span>
+            </div>
+            <div class="table-wrap">
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th class="numeric">Data</th>
+                            <th>Descrizione</th>
+                            <th>Conto / collegamento</th>
+                            <th>Tipo</th>
+                            <th class="numeric">Importo</th>
+                            <th>Esito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}<tr><td class="numeric">{{ row.date|date:"d/m/Y" }}</td><td>{{ row.description }}</td><td>{{ row.account }}</td><td>{{ row.kind }}</td><td class="numeric">{{ row.amount|euro }}</td><td>{% if row.duplicate %}Già presente{% else %}Da aggiungere{% endif %}</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <form method="post" action="{% url 'import_confirm' %}">{% csrf_token %}<input type="hidden" name="confirm" value="yes"><button class="button button-primary" type="submit">Conferma importazione</button></form>
+    {% endif %}
+    <form method="post" class="button-row">{% csrf_token %}<input type="hidden" name="stage" value="clear"><button class="button button-secondary" type="submit">Carica un altro file</button></form>
+{% endblock %}

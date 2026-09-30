@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#f0f4fc">
+        <title>Accedi · Wallet</title>
+        <link rel="stylesheet" href="{% static 'wallet/app.css' %}">
+        <script defer src="{% static 'wallet/js/auth.js' %}"></script>
+    </head>
+    <body class="auth-page">
+        {% include "wallet/components/icons.html" %}
+        <main class="auth-card">
+            <a class="brand auth-brand" href="{% url 'login' %}"><span class="brand-mark"><svg aria-hidden="true"><use href="#i-wallet" /></svg></span><strong>Wallet</strong></a>
+            <h1>Accedi</h1>
+            {% if form.non_field_errors %}<div class="alert alert-error"
+     role="alert">Nome utente o password non corretti. Riprova.</div>{% endif %}
+            {% if next and user.is_authenticated %}<div class="alert alert-error" role="alert">Il tuo account non è autorizzato a visualizzare questa pagina.</div>{% endif %}
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+                <div class="field">
+                    <label for="id_username">{{ form.username.label }}</label>{{ form.username }}{{ form.username.errors }}
+                </div>
+                <div class="field">
+                    <label for="id_password">{{ form.password.label }}</label>
+                    <div class="password-field">
+                        {{ form.password }}<button type="button"
+        class="password-toggle"
+        data-password-toggle
+        aria-label="Mostra password"
+        aria-controls="id_password"
+        aria-pressed="false"
+        hidden>
+                        <svg class="ui-icon" aria-hidden="true">
+                            <use href="#i-eye" />
+                        </svg>
+                        </button>
+                    </div>
+                    {{ form.password.errors }}
+                </div>
+                <button class="button button-primary auth-submit"
+                        type="submit">Accedi <span aria-hidden="true">→</span></button>
+            </form>
+        </main>
+    </body>
+</html>

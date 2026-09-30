@@ -1,0 +1,22 @@
+{% extends "wallet/base.html" %}{% load wallet_tags %}{% block title %}Overview{% endblock %}{% block content %}
+<div class="page-heading"><div><h1>Overview</h1></div>{% include "wallet/components/new_button.html" %}</div>
+{% include "wallet/components/filters.html" %}
+<section class="panel"><div class="panel-heading"><div><h2>Uscite per categoria</h2></div><label class="month-picker"><span class="sr-only">Scegli un mese</span><select data-month-picker><option value="">Periodo selezionato</option>{% for m in month_choices %}<option value="mese:{{ m.value }}"
+        {% if period == 'mese:'|add:m.value %}selected{% endif %}>{{ m.label }}</option>{% endfor %}</select></label></div>
+{% if donut_rows %}<div class="donut-layout"><div class="donut-wrap"><div class="chart donut-chart"
+     data-chart="donut"
+     role="img"
+     aria-label="Distribuzione delle uscite per categoria"></div><div class="donut-center"><span>TOTALE SPESE</span><strong>{{ donut_total|euro }}</strong></div></div><div class="expense-legend">{% for row in donut_rows %}<div class="legend-row"><i class="dot" style="--color:{{ row.color }}"></i><div><strong>{{ row.name }}</strong><small>{{ row.percent_display }} · {{ row.count }} movimenti</small></div><b>{{ row.amount|euro }}</b></div>{% endfor %}</div></div>{% else %}<div class="empty-state"><span>◌</span><h3>Nessuna uscita nel periodo</h3><p>Prova a cambiare i filtri o aggiungi il tuo primo movimento.</p></div>{% endif %}</section>
+<section class="panel"><div class="panel-heading"><div><h2>Uscite mensili per {% if detail == "sottocategoria" %}sottocategoria{% else %}categoria{% endif %}</h2></div><div class="segments"><a href="{% query_url dettaglio='categoria' %}"
+   data-filter-link
+   class="{% if detail == 'categoria' %}selected{% endif %}">Categoria</a><a href="{% query_url dettaglio='sottocategoria' %}"
+   data-filter-link
+   class="{% if detail == 'sottocategoria' %}selected{% endif %}">Sottocategoria</a></div></div><div class="chart"
+     data-chart="spending"
+     role="img"
+     aria-label="Uscite mensili impilate"></div></section>
+<section class="panel"><div class="panel-heading"><div><h2>Riepilogo per {% if detail == "sottocategoria" %}sottocategoria{% else %}categoria{% endif %}</h2></div></div><div class="table-wrap"><table><thead><tr><th><a data-filter-link
+   href="{% if sort == 'name' %}{% query_url ordine='-name' %}{% else %}{% query_url ordine='name' %}{% endif %}">{% if detail == "sottocategoria" %}Sottocategoria{% else %}Categoria{% endif %} ↕</a></th><th class="numeric"><a data-filter-link
+   href="{% if sort == '-amount' %}{% query_url ordine='amount' %}{% else %}{% query_url ordine='-amount' %}{% endif %}">Totale ↕</a></th><th class="numeric"><a data-filter-link
+   href="{% if sort == '-average' %}{% query_url ordine='average' %}{% else %}{% query_url ordine='-average' %}{% endif %}">Media mensile ↕</a></th></tr></thead><tbody>{% for r in monthly_table %}<tr><td><i class="dot" style="--color:{{ r.color }}"></i>{{ r.name }}</td><td class="numeric strong">{{ r.amount|euro }}</td><td class="numeric">{{ r.average|euro }}</td></tr>{% empty %}<tr><td colspan="3" class="empty-inline">Nessuna spesa corrisponde ai filtri.</td></tr>{% endfor %}</tbody></table></div></section>
+{{ charts|json_script:'chart-data' }}{% endblock %}

@@ -1,0 +1,6 @@
+Aggiungere la possibilità di più utenti
+
+Mettere il progetto su github e fare il deploy tipo app ClimbingSide
+
+
+Aggiungere icone e migliorare colori

@@ -1,0 +1,16 @@
+{% load wallet_tags %}
+<div class="kpi-grid">
+    <article class="kpi"><span class="round-icon income">
+        <svg class="flow-arrow" aria-hidden="true">
+            <use href="#i-income" />
+        </svg></span><span>Entrate</span><strong>{{ income|euro }}</strong></article>
+        <article class="kpi"><span class="round-icon expense">
+            <svg class="flow-arrow" aria-hidden="true">
+                <use href="#i-expense" />
+            </svg></span><span>Uscite</span><strong>{{ outgoing|euro }}</strong></article>
+            <article class="kpi"><span class="round-icon">
+                <svg aria-hidden="true">
+                    <use href="#i-balance" />
+                </svg></span><span>Saldo finale</span><strong>{{ closing|euro }}</strong><small>Al {{ end_display }}</small></article>
+            </div>
+            <details class="summary-details" data-persist="kpis"><summary><svg class="ui-icon" aria-hidden="true"><use href="#i-sliders" /></svg>Dettagli del periodo<svg class="ui-icon chevron" aria-hidden="true"><use href="#i-chevron" /></svg></summary><div class="detail-grid"><div>Saldo iniziale<strong>{{ opening|euro }}</strong></div><div>Differenza netta<strong>{{ net|euro }}</strong></div><div>Movimenti nei flussi<strong>{{ transaction_count }}</strong></div>{% if transfers_in or transfers_out %}<div>Trasferimenti da / verso altri conti<strong>+ {{ transfers_in|euro }} / − {{ transfers_out|euro }}</strong></div>{% endif %}</div></details>

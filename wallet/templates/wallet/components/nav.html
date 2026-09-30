@@ -1,0 +1,12 @@
+{% with route=request.resolver_match.url_name %}
+    <a href="{% url 'dashboard' %}"
+       {% if route == 'dashboard' %}class="active" aria-current="page"{% endif %}><svg><use href="#i-home" /></svg><span>Dashboard</span></a>
+    <a href="{% url 'overview' %}"
+       {% if route == 'overview' %}class="active" aria-current="page"{% endif %}><svg><use href="#i-chart" /></svg><span>Overview</span></a>
+    <a href="{% url 'transactions' %}"
+       {% if route == 'transactions' or route == 'transaction_new' or route == 'transaction_edit' or route == 'transfers' or route == 'transfer_edit' %}class="active" aria-current="page"{% endif %}><svg><use href="#i-transfer" /></svg><span>Movimenti</span></a>
+    <a href="{% url 'budget' %}"
+       {% if route == 'budget' %}class="active" aria-current="page"{% endif %}><svg><use href="#i-budget" /></svg><span>Budget</span></a>
+    <a href="{% url 'settings' %}"
+       {% if route == 'settings' or route == 'categories' or route == 'backup' or route == 'import' or route == 'import_confirm' or route == 'restore_backup' or route == 'password_change' or route == 'password_change_done' %}class="active" aria-current="page"{% endif %}><svg><use href="#i-account" /></svg><span class="desktop-label">Account e impostazioni</span><span class="mobile-label">Account</span></a>
+{% endwith %}

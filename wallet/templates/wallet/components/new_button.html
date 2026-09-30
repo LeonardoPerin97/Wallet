@@ -1,0 +1,5 @@
+<button type="button"
+        class="button button-primary new-movement"
+        data-new-movement
+        data-account="{{ selected_account|default:'' }}"><span aria-hidden="true">+</span> Nuovo movimento</button>
+<noscript><a href="{% url 'transaction_new' %}">Aggiungi entrata o uscita</a> · <a href="{% url 'transfers' %}">Trasferimento interno</a></noscript>

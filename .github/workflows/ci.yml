@@ -1,0 +1,84 @@
+name: Wallet checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  postgres:
+    name: Django tests on PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: wallet_ci
+          POSTGRES_USER: wallet
+          POSTGRES_PASSWORD: wallet
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wallet -d wallet_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      WALLET_ENV: local
+      WALLET_DEBUG: "0"
+      WALLET_OWNER_USERNAME: wallet-owner
+      WALLET_ALLOWED_HOSTS: localhost,127.0.0.1
+      DATABASE_URL: postgresql://wallet:wallet@127.0.0.1:5432/wallet_ci
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check Django configuration and migrations
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+      - name: Run application tests on PostgreSQL
+        run: python manage.py test
+
+  browser:
+    name: Browser smoke test
+    runs-on: ubuntu-latest
+    env:
+      WALLET_ENV: local
+      WALLET_DEBUG: "1"
+      WALLET_OWNER_USERNAME: demo
+      WALLET_ALLOWED_HOSTS: 127.0.0.1,localhost
+      WALLET_SECRET_KEY: ci-only-secret-key
+      DJANGO_SUPERUSER_USERNAME: demo
+      WALLET_DB_PATH: test-browser.sqlite3
+      DJANGO_SUPERUSER_PASSWORD: ci-password-for-browser-test
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-test.txt
+      - name: Install application and browser-test dependencies
+        run: python -m pip install -r requirements-test.txt
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Prepare a separate demonstration database
+        run: |
+          python manage.py migrate --noinput
+          python manage.py crea_demo
+          python manage.py shell -c "import os; from django.contrib.auth import get_user_model; u = get_user_model().objects.get(username='demo'); u.set_password(os.environ['DJANGO_SUPERUSER_PASSWORD']); u.save(update_fields=['password'])"
+      - name: Verify main browser flow
+        run: python scripts/browser_smoke.py --start-server
+      - name: Save browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wallet-browser-screenshots
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

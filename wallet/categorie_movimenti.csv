@@ -1,0 +1,96 @@
+Categoria,Sottocategoria,Colore,Tipo
+Entrate,Stipendio,#16A34A,Entrata
+Entrate,Bonus,#16A34A,Entrata
+Entrate,Rimborsi,#16A34A,Entrata
+Entrate,Vendite,#16A34A,Entrata
+Entrate,Regali,#16A34A,Entrata
+Entrate,Interessi,#16A34A,Entrata
+Entrate,Pensione,#16A34A,Entrata
+Entrate,Redditi da affitto,#16A34A,Entrata
+Entrate,Borse di studio,#16A34A,Entrata
+Entrate,Altre entrate,#16A34A,Entrata
+Supermercati,Supermercato,#EA580C,Uscita necessaria
+Bar e ristoranti,Bar / Caffè,#F97316,Uscita extra
+Bar e ristoranti,Ristoranti,#F97316,Uscita extra
+Bar e ristoranti,Delivery,#F97316,Uscita extra
+"Tasse, assicurazioni e commissioni",Tasse,#92400E,Uscita necessaria
+"Tasse, assicurazioni e commissioni",Assicurazioni,#92400E,Uscita necessaria
+"Tasse, assicurazioni e commissioni",Commissioni bancarie,#92400E,Uscita necessaria
+"Tasse, assicurazioni e commissioni",Multe,#92400E,Uscita extra
+"Tasse, assicurazioni e commissioni",Rimborso prestiti e interessi,#92400E,Uscita necessaria
+Casa,Affitto / Mutuo,#2563EB,Uscita necessaria
+Casa,Utenze,#2563EB,Uscita necessaria
+Casa,Condominio,#2563EB,Uscita necessaria
+Casa,Manutenzione / Riparazioni,#2563EB,Uscita necessaria
+Casa,Arredi / Articoli per la casa,#2563EB,Uscita extra
+Auto e trasporti,Carburante,#0891B2,Uscita necessaria
+Auto e trasporti,Autostrade / Pedaggi,#0891B2,Uscita necessaria
+Auto e trasporti,Parcheggi,#0891B2,Uscita necessaria
+Auto e trasporti,Assicurazione auto,#0891B2,Uscita necessaria
+Auto e trasporti,Manutenzione auto,#0891B2,Uscita necessaria
+Auto e trasporti,Trasporti pubblici,#0891B2,Uscita necessaria
+Auto e trasporti,Taxi / NCC,#0891B2,Uscita extra
+Auto e trasporti,Altri trasporti,#0891B2,Uscita extra
+"Telefono, internet e abbonamenti",Telefono,#0EA5E9,Uscita necessaria
+"Telefono, internet e abbonamenti",Internet,#0EA5E9,Uscita necessaria
+"Telefono, internet e abbonamenti",TV / Streaming / Musica,#0EA5E9,Uscita extra
+"Telefono, internet e abbonamenti",Software / App,#0EA5E9,Uscita extra
+"Telefono, internet e abbonamenti",Altri abbonamenti,#0EA5E9,Uscita extra
+Svago e tempo libero,Hobby,#7C3AED,Uscita extra
+Svago e tempo libero,Cinema / Teatro / Concerti,#7C3AED,Uscita extra
+Svago e tempo libero,Cultura / Eventi,#7C3AED,Uscita extra
+Svago e tempo libero,Libri,#7C3AED,Uscita extra
+Svago e tempo libero,Giochi,#7C3AED,Uscita extra
+Svago e tempo libero,Beneficenza / Donazioni,#7C3AED,Uscita extra
+Svago e tempo libero,Altro,#7C3AED,Uscita extra
+Risparmi e investimenti,Risparmio,#0F766E,Investimento
+Risparmi e investimenti,Investimenti finanziari,#0F766E,Investimento
+Risparmi e investimenti,Previdenza / Pensione integrativa,#0F766E,Investimento
+Sport,Palestra / Abbonamento sportivo,#65A30D,Uscita extra
+Sport,Palestra di arrampicata,#65A30D,Uscita extra
+Sport,Corsi / Lezioni,#65A30D,Uscita extra
+Sport,Attrezzatura,#65A30D,Uscita extra
+Sport,Altro,#65A30D,Uscita extra
+Viaggi e vacanze,Aereo,#0284C7,Uscita extra
+Viaggi e vacanze,Treno,#0284C7,Uscita extra
+Viaggi e vacanze,Hotel / Alloggio,#0284C7,Uscita extra
+Viaggi e vacanze,Noleggio auto,#0284C7,Uscita extra
+Viaggi e vacanze,Attività / Escursioni,#0284C7,Uscita extra
+Viaggi e vacanze,Assicurazione viaggio,#0284C7,Uscita extra
+Viaggi e vacanze,Altro,#0284C7,Uscita extra
+Salute,Farmacia,#E11D48,Uscita necessaria
+Salute,Visite mediche,#E11D48,Uscita necessaria
+Salute,Esami / Analisi,#E11D48,Uscita necessaria
+Salute,Dentista,#E11D48,Uscita necessaria
+Salute,Occhiali / Lenti a contatto,#E11D48,Uscita necessaria
+Salute,Altro,#E11D48,Uscita necessaria
+Shopping,Abbigliamento,#DB2777,Uscita extra
+Shopping,Tecnologia,#DB2777,Uscita extra
+Shopping,Casa / Oggetti,#DB2777,Uscita extra
+Shopping,Regali,#DB2777,Uscita extra
+Shopping,Altro,#DB2777,Uscita extra
+Cura personale,Barbiere / Parrucchiere,#E76F51,Uscita extra
+Cura personale,Estetica / Cosmetici,#E76F51,Uscita extra
+Cura personale,Altro,#E76F51,Uscita extra
+Istruzione,Corsi / Formazione,#4F46E5,Uscita necessaria
+Istruzione,Tasse scolastiche / Universitarie,#4F46E5,Uscita necessaria
+Istruzione,Libri / Materiali,#4F46E5,Uscita necessaria
+Istruzione,Altro,#4F46E5,Uscita necessaria
+Animali,Cibo,#A16207,Uscita necessaria
+Animali,Veterinario,#A16207,Uscita necessaria
+Animali,Accessori,#A16207,Uscita extra
+Animali,Servizi,#A16207,Uscita extra
+Animali,Altro,#A16207,Uscita extra
+Figli,Scuola / Istruzione,#EC4899,Uscita necessaria
+Figli,Salute,#EC4899,Uscita necessaria
+Figli,Abbigliamento,#EC4899,Uscita necessaria
+Figli,Tata / Babysitter,#EC4899,Uscita necessaria
+Figli,Mantenimento,#EC4899,Uscita necessaria
+Figli,Attività / Sport,#EC4899,Uscita extra
+Figli,Hobby,#EC4899,Uscita extra
+Figli,Giochi,#EC4899,Uscita extra
+Figli,Regali,#EC4899,Uscita extra
+Figli,Paghetta,#EC4899,Uscita extra
+Figli,Altro,#EC4899,Uscita extra
+Prelievi contanti,Prelievo contanti,#64748B,Uscita extra
+Altro,Altro,#555555,Uscita extra

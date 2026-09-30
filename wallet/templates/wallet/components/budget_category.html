@@ -1,0 +1,41 @@
+{% load wallet_tags l10n %}
+<details class="budget-group" data-budget-group data-budget-spent="{{ row.spent|unlocalize }}" data-category-id="{{ row.category.id }}" {% if row.errors %}open{% endif %}>
+    <summary class="budget-summary">
+        <div class="budget-category">
+            <i class="dot" style="--color:{{ row.category.color|vivid_color }}" aria-hidden="true"></i>
+            <div><strong>{{ row.category.name }}</strong><small data-budget-balance>{{ row.spent|euro }} spesi{% if row.has_budget %} · {{ row.remaining_label|lower }} {{ row.remaining_display|euro }}{% endif %}</small></div>
+        </div>
+        <div class="budget-progress">
+            <div class="progress-track {{ row.state }}" data-budget-progress><span style="width:{{ row.progress }}%"></span></div>
+            <span data-budget-status>{% if row.has_budget %}{{ row.ratio_label }} · {% if row.state == "over" %}Superato{% elif row.state == "near" %}Vicino al limite{% else %}Regolare{% endif %}{% else %}Nessun limite{% endif %}</span>
+        </div>
+        <div class="budget-summary-limit"><small data-budget-source>{% if row.mode == 'sottocategorie' %}Somma sottocategorie{% else %}Budget categoria{% endif %}</small><output data-budget-total aria-live="polite">{% if row.has_budget %}{{ row.limit|euro }}{% else %}Non impostato{% endif %}</output></div>
+        <svg class="ui-icon chevron" aria-hidden="true"><use href="#i-chevron" /></svg>
+    </summary>
+    <div class="budget-editor">
+        {% for error in row.errors %}<p class="alert alert-error">{{ error }}</p>{% endfor %}
+        <fieldset class="budget-mode">
+            <legend>Come vuoi impostare il budget?</legend>
+            <label><input type="radio" name="budget_mode_{{ row.category.id }}" value="categoria" {% if row.mode != 'sottocategorie' %}checked{% endif %}>Limite unico</label>
+            {% if row.subcategories %}<label><input type="radio" name="budget_mode_{{ row.category.id }}" value="sottocategorie" {% if row.mode == 'sottocategorie' %}checked{% endif %}>Per sottocategoria</label>{% endif %}
+        </fieldset>
+        <div data-budget-manual>
+            <label class="budget-manual-input" for="budget-{{ row.category.id }}">Budget {{ row.category.name }} (€)</label>
+            <input id="budget-{{ row.category.id }}" name="budget_{{ row.category.id }}" value="{{ row.input_value }}" placeholder="Non impostato" inputmode="decimal" data-budget-amount>
+        </div>
+        {% if row.subcategories %}<div data-budget-parts>
+            <p class="budget-help">Il totale della categoria si aggiorna mentre scrivi. Conferma con «Salva budget del mese». Lascia vuoto per non impostare un limite.</p>
+            <div class="subcategory-budgets">{% for sub in row.subcategories %}
+                <div class="subcategory-budget-row" data-budget-subcategory data-budget-spent="{{ sub.spent|unlocalize }}">
+                    <div><label for="subbudget-{{ sub.subcategory.id }}">{{ sub.subcategory.name }}{% if not sub.subcategory.active %} <small>archiviata</small>{% endif %}</label><small data-budget-sub-balance>{{ sub.spent|euro }} spesi{% if sub.has_budget %} · {{ sub.remaining_label|lower }} {{ sub.remaining_display|euro }}{% endif %}</small></div>
+                    <div class="budget-part-input"><span aria-hidden="true">€</span><input id="subbudget-{{ sub.subcategory.id }}" name="subbudget_{{ sub.subcategory.id }}" value="{{ sub.input_value }}" placeholder="Non impostato" inputmode="decimal" aria-label="Budget {{ row.category.name }} · {{ sub.subcategory.name }}" data-budget-amount></div>
+                    <div class="budget-progress budget-sub-progress">
+                        <div class="progress-track {{ sub.state }}" data-budget-progress aria-hidden="true"><span style="width:{{ sub.progress }}%"></span></div>
+                        <span data-budget-status>{% if sub.has_budget %}{{ sub.ratio_label }} · {% if sub.state == "over" %}Superato{% elif sub.state == "near" %}Vicino al limite{% else %}Regolare{% endif %}{% else %}Nessun limite{% endif %}</span>
+                    </div>
+                </div>
+            {% endfor %}</div>
+            <div class="budget-category-total"><span>Totale {{ row.category.name }}</span><output data-budget-parts-total aria-live="polite">{% if row.has_budget %}{{ row.limit|euro }}{% else %}Non impostato{% endif %}</output></div>
+        </div>{% endif %}
+    </div>
+</details>

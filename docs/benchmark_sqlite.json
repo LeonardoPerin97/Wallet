@@ -1,0 +1,116 @@
+{
+  "measured_at": "2026-09-29",
+  "scope": "Service computations, synthetic SQLite data; tracemalloc enabled; excludes HTTP, templates, browser and database-engine memory. Single measured execution for each case, not an SLA.",
+  "before": [
+    {
+      "transactions": 10000,
+      "transfers": 1000,
+      "database": "SQLite",
+      "python": "3.12.14",
+      "django": "5.2.17",
+      "register_page_25": {
+        "seconds": 8.8629,
+        "python_peak_mib": 36.877,
+        "queries": 5,
+        "check": {
+          "count": 12000,
+          "visible": 25
+        }
+      },
+      "home": {
+        "seconds": 7.6617,
+        "python_peak_mib": 31.845,
+        "queries": 5,
+        "check": {
+          "income": "166616.68",
+          "outgoing": "333333.33",
+          "opening": "3000.00",
+          "closing": "-163716.65"
+        }
+      }
+    },
+    {
+      "transactions": 50000,
+      "transfers": 5000,
+      "database": "SQLite",
+      "python": "3.12.14",
+      "django": "5.2.17",
+      "register_page_25": {
+        "seconds": 31.4542,
+        "python_peak_mib": 184.874,
+        "queries": 5,
+        "check": {
+          "count": 60000,
+          "visible": 25
+        }
+      },
+      "home": {
+        "seconds": 30.045,
+        "python_peak_mib": 152.276,
+        "queries": 5,
+        "check": {
+          "income": "833083.40",
+          "outgoing": "1666666.75",
+          "opening": "3000.00",
+          "closing": "-830583.35"
+        }
+      }
+    }
+  ],
+  "after": [
+    {
+      "transactions": 10000,
+      "transfers": 1000,
+      "database": "SQLite",
+      "python": "3.12.14",
+      "django": "5.2.17",
+      "register_page_25": {
+        "seconds": 0.3514,
+        "python_peak_mib": 0.685,
+        "queries": 4,
+        "check": {
+          "count": 12000,
+          "visible": 25
+        }
+      },
+      "home": {
+        "seconds": 0.4482,
+        "python_peak_mib": 0.722,
+        "queries": 10,
+        "check": {
+          "income": "166616.68",
+          "outgoing": "333333.33",
+          "opening": "3000.00",
+          "closing": "-163716.65"
+        }
+      }
+    },
+    {
+      "transactions": 50000,
+      "transfers": 5000,
+      "database": "SQLite",
+      "python": "3.12.14",
+      "django": "5.2.17",
+      "register_page_25": {
+        "seconds": 1.3651,
+        "python_peak_mib": 0.681,
+        "queries": 5,
+        "check": {
+          "count": 60000,
+          "visible": 25
+        }
+      },
+      "home": {
+        "seconds": 1.8093,
+        "python_peak_mib": 0.724,
+        "queries": 10,
+        "check": {
+          "income": "833083.40",
+          "outgoing": "1666666.75",
+          "opening": "3000.00",
+          "closing": "-830583.35"
+        }
+      }
+    }
+  ]
+}

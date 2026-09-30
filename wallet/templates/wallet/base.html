@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#123e98">
+        <title>{% block title %}Dashboard{% endblock %} · Wallet</title><link rel="stylesheet"
+      href="{% static 'wallet/app.css' %}">
+        <script defer src="{% static 'wallet/plotly.min.js' %}"></script>
+        <script defer src="{% static 'wallet/js/charts.js' %}"></script>
+        <script defer src="{% static 'wallet/js/filters.js' %}"></script>
+        <script defer src="{% static 'wallet/js/forms.js' %}"></script>
+        <script defer src="{% static 'wallet/js/budget.js' %}"></script>
+        <script defer src="{% static 'wallet/app.js' %}"></script>
+    </head>
+    <body>
+        <a class="skip-link" href="#main">Vai al contenuto</a>
+        {% include "wallet/components/icons.html" %}
+        <div class="app-shell"><header class="topbar"><div class="topbar-inner"><a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark"><svg aria-hidden="true"><use href="#i-wallet" /></svg></span><strong>Wallet</strong></a>
+            <nav class="main-nav" aria-label="Navigazione principale">
+                {% include "wallet/components/nav.html" %}
+            </nav>
+            </div>
+            </header>
+            <main id="main" class="main-area" tabindex="-1">
+                <div class="page-content">
+                    {% if messages %}<div class="messages">{% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}" role="status">{{ message }}</div>{% endfor %}</div>{% endif %}
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+            <nav class="mobile-bottom-navigation" aria-label="Navigazione mobile">
+                {% include "wallet/components/nav.html" %}
+            </nav>
+        </div>
+        <dialog id="new-movement-dialog" aria-labelledby="new-title">
+            <div class="dialog-heading">
+                <div>
+                    <h2 id="new-title">Aggiungi un movimento</h2>
+                </div>
+                <button class="icon-button" data-close-dialog aria-label="Chiudi">×</button>
+            </div>
+            <div class="movement-choices"><a data-new-link href="{% url 'transaction_new' %}?flusso=entrata"><span class="round-icon income"><svg class="flow-arrow" aria-hidden="true"><use href="#i-income" /></svg></span><span><strong>Entrata</strong></span><b>→</b></a><a data-new-link href="{% url 'transaction_new' %}?flusso=uscita"><span class="round-icon expense"><svg class="flow-arrow" aria-hidden="true"><use href="#i-expense" /></svg></span><span><strong>Uscita</strong></span><b>→</b></a><a href="{% url 'transfers' %}"><span class="round-icon"><svg aria-hidden="true"><use href="#i-transfer" /></svg></span><span><strong>Trasferimento interno</strong></span><b>→</b></a></div></dialog>
+        <div class="sr-only" id="update-status" role="status" aria-live="polite"></div>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,94 @@
+{% load wallet_tags %}
+{% if filters.error %}<p class="alert alert-error">{{ filters.error }}</p>{% endif %}
+<form method="get" class="filter-form" data-filter-form id="page-filters">
+    <input type="hidden" name="periodo" value="{{ period }}" data-period-field>
+    {% if detail and analysis_filters %}<input type="hidden" name="dettaglio" value="{{ detail }}"><input type="hidden" name="ordine" value="{{ sort }}">{% elif movement_filters %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+    <div class="filter-primary">
+        <details class="filter-panel"
+                 data-persist="period-filter"
+                 data-filter-group="period">
+            <summary>
+                <span class="filter-icon">
+                    <svg class="ui-icon" aria-hidden="true">
+                        <use href="#i-calendar" />
+                    </svg></span><span class="filter-caption"><span>Periodo</span><strong>{{ period_filter_summary }}</strong></span><svg class="ui-icon chevron" aria-hidden="true">
+                        <use href="#i-chevron" />
+                    </svg>
+                </summary>
+                <div class="filter-period-content">
+                    <div class="segments" aria-label="Seleziona periodo">{% for code,label in periods %}<button type="button"
+        name="periodo"
+        value="{{ code }}"
+        data-period="{{ code }}"
+        class="{% if period == code %}selected{% endif %}">{{ label }}</button>{% endfor %}</div>
+                    <div class="date-range">
+                        <label>
+                            Dal<input name="inizio"
+       value="{{ start_display }}"
+       placeholder="gg/mm/aaaa"
+       inputmode="numeric"
+       data-date></label><span aria-hidden="true">→</span><label>Al<input name="fine"
+       value="{{ end_display }}"
+       placeholder="gg/mm/aaaa"
+       inputmode="numeric"
+       data-date>
+                            </label>
+                        </div>
+                    </div>
+                </details>
+                <details class="filter-panel multi-select account-filter"
+                         data-persist="account-filter"
+                         data-filter-group="account">
+                    <summary>
+                        <span class="filter-icon">
+                            <svg class="ui-icon" aria-hidden="true">
+                                <use href="#i-wallet" />
+                            </svg></span><span class="filter-caption"><span>Conto</span><strong>{{ account_filter_summary }}</strong></span><svg class="ui-icon chevron" aria-hidden="true">
+                                <use href="#i-chevron" />
+                            </svg>
+                        </summary>
+                        <div class="multi-options"><div class="selection-actions"><button type="button" data-select="all">Tutti</button><button type="button" data-select="none">Nessuno</button></div><input type="hidden" name="conto" value=""><div>{% for a in accounts %}<label><input type="checkbox"
+       name="conto"
+       value="{{ a.id }}"
+       {% if a.id in selected_account_ids %}checked{% endif %}>{{ a.name }}{% if not a.active %} <small>archiviato</small>{% endif %}</label>{% endfor %}</div></div>
+                    </details>
+                </div>
+                {% if analysis_filters %}
+                    <details class="filter-panel filter-secondary"
+                             data-persist="classification-filter"
+                             data-filter-group="classification">
+                        <summary><svg class="ui-icon" aria-hidden="true"><use href="#i-sliders" /></svg><strong>{% if movement_filters %}Categorie e tipi{% else %}Categorie{% endif %}</strong><span class="filter-summary">{{ category_filter_summary }}</span><svg class="ui-icon chevron" aria-hidden="true"><use href="#i-chevron" /></svg></summary>
+                        <div class="filter-content">
+                            <details class="multi-select" data-persist="categories-filter"><summary>Categorie <small>{{ category_filter_summary }}</small></summary><div class="multi-options"><div class="selection-actions"><button type="button" data-select="all">Tutte</button><button type="button" data-select="none">Nessuna</button></div><input type="hidden" name="categoria" value=""><div class="filter-choice-grid">{% for c in categories %}<label class="filter-choice-card" style="--color:{{ c.color|vivid_color }}"><input type="checkbox"
+       name="categoria"
+       value="{{ c.id }}"
+       {% if c.id in selected_category_ids %}checked{% endif %}><i class="dot"
+   style="--color:{{ c.color|vivid_color }}"
+   aria-hidden="true"></i><span>{{ c.name }}</span></label>{% endfor %}<label class="filter-choice-card" style="--color:#00BEEA"><input type="checkbox"
+       name="categoria"
+       value="giroconto"
+       {% if selected_giroconti %}checked{% endif %}><i class="dot" aria-hidden="true"></i><span>Giroconto</span></label></div></div></details>
+                            <details class="multi-select" data-persist="subcategories-filter"><summary>Sottocategorie <small>{{ subcategory_filter_summary }}</small></summary><div class="multi-options"><div class="selection-actions"><button type="button" data-select="all">Tutte</button><button type="button" data-select="none">Nessuna</button></div><input type="hidden" name="sottocategoria" value=""><div class="filter-choice-grid">{% for s in subcategories %}{% if s.category_id in selected_category_ids %}<label class="filter-choice-card" style="--color:{{ s.category.color|vivid_color }}"><input type="checkbox"
+       name="sottocategoria"
+       value="{{ s.id }}"
+       {% if s.id in selected_subcategory_ids %}checked{% endif %}><i class="dot" aria-hidden="true"></i><span>{{ s.name }}<small>{{ s.category.name }}</small></span></label>{% endif %}{% endfor %}</div></div></details>
+                            {% if movement_filters %}<details class="multi-select" data-persist="kind-filter"><summary>Tipo <small>{{ kind_filter_summary }}</small></summary><div class="multi-options"><div class="selection-actions"><button type="button" data-select="all">Tutti</button><button type="button" data-select="none">Nessuno</button></div><input type="hidden" name="tipo" value="">{% for val,label in kind_choices %}<label><input type="checkbox"
+       name="tipo"
+       value="{{ val }}"
+       {% if val in selected_kinds %}checked{% endif %}>{{ label }}</label>{% endfor %}</div></details>{% endif %}
+                        </div>
+                    </details>
+                {% endif %}
+                <div class="filter-footer">
+                    {% if movement_filters %}<input type="hidden" name="vista" value="{{ mode }}"><input type="hidden" name="per_pagina" value="{{ per_page }}"><label class="search-field"><span class="sr-only">Cerca un movimento</span><input type="search"
+       name="q"
+       value="{{ filters.query }}"
+       placeholder="Cerca descrizione, categoria o riferimento…"
+       data-search></label>{% endif %}
+                    <div class="filter-actions">
+                        <a class="button button-quiet button-small"
+   href="?periodo=tutto&conto=tutti{% if detail and analysis_filters %}&dettaglio={{ detail }}{% elif movement_filters %}&vista={{ mode }}&per_pagina={{ per_page }}{% endif %}"
+   data-filter-link>Ripristina</a>
+                    </div>
+                </div>
+            </form>

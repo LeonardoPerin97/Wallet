@@ -1,0 +1,37 @@
+{% extends "wallet/base.html" %}
+{% block title %}Importa movimenti{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Importa movimenti" %}
+    <div class="stepper">
+        <div class="step active"><span>1</span> Carica file</div>
+        <i></i>
+        <div class="step"><span>2</span> Associa colonne</div>
+        <i></i>
+        <div class="step"><span>3</span> Controlla</div>
+        <i></i>
+        <div class="step"><span>4</span> Conferma</div>
+    </div>
+    <section class="panel upload-panel"><div class="upload-icon">⇧</div><h2>Scegli il tuo estratto conto</h2><form method="post"
+      enctype="multipart/form-data"
+      class="upload-form"
+      data-loading>{% csrf_token %}<input type="hidden" name="stage" value="upload">{{ form.file }}{% if form.file.errors %}<div class="field-error">{{ form.file.errors }}</div>{% endif %}<label class="delimiter-choice">Separatore CSV<select name="delimiter"><option value="">Rileva automaticamente</option><option value="comma">Virgola (,)</option><option value="semicolon">Punto e virgola (;)</option><option value="tab">Tabulazione</option><option value="pipe">Barra verticale (|)</option></select></label><small>Massimo 10 MB. Controlla l’anteprima prima di confermare.</small><button class="button button-primary" type="submit">Carica e visualizza anteprima</button></form></section>
+    <section class="import-guidance">
+        <article><span class="guidance-number">01</span>
+            <div>
+                <strong>Anteprima prima di importare</strong>
+                <p>Associa le colonne; vengono rilevati separatore, intestazioni e formati più comuni.</p>
+            </div>
+        </article><article><span class="guidance-number">02</span>
+            <div>
+                <strong>Controllo righe</strong>
+                <p>Le categorie sconosciute, le righe incomplete e i possibili duplicati vengono evidenziati per revisione.</p>
+            </div>
+        </article><article><span class="guidance-number">03</span>
+            <div>
+                <strong>Saldi progressivi</strong>
+                <p>Se il file contiene il saldo dopo operazione, l’app stima il saldo di apertura e segnala incongruenze.</p>
+            </div>
+        </article>
+    </section>
+{% endblock %}

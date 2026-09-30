@@ -1,0 +1,107 @@
+{% extends "wallet/base.html" %}
+{% load wallet_tags %}
+{% block title %}Controlla importazione{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Controlla le righe" %}
+    <div class="stepper">
+        <div class="step complete"><span>✓</span> Carica file</div>
+        <i></i>
+        <div class="step complete"><span>✓</span> Associa colonne</div>
+        <i></i>
+        <div class="step active"><span>3</span> Controlla</div>
+        <i></i>
+        <div class="step"><span>4</span> Conferma</div>
+    </div>
+    <div class="summary-strip">
+        <div><strong>{{ ok_count }}</strong><span>Pronte</span></div>
+        <div><strong class="warning-text">{{ repair_count }}</strong><span>Da correggere</span></div>
+        <div><strong class="danger-text">{{ duplicate_count }}</strong><span>Possibili duplicati</span></div>
+        <div><strong>{{ rows|length }}</strong><span>Righe totali</span></div>
+    </div>
+    <form id="cancel-import" method="post" action="{% url 'import' %}" hidden>
+        {% csrf_token %}
+        <input type="hidden" name="stage" value="clear">
+    </form>
+    <form id="confirm-import"
+          method="post"
+          action="{% url 'import_confirm' %}"
+          data-loading>
+        {% csrf_token %}
+        {% if opening_accounts %}
+            <section class="panel form-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Saldo iniziale dei conti</h2>
+                    </div>
+                </div>
+                <div class="initial-balance-grid">
+                    {% for account in opening_accounts %}<label>{{ account }}{% with check=balance_checks|get_item:account %}{% if has_balance and check %}<small>Saldo di apertura stimato: {{ check.opening|euro }}</small>{% endif %}<input type="text"
+       name="initial_{{ forloop.counter0 }}"
+       value="{% if has_balance and check %}{{ check.opening }}{% else %}0,00{% endif %}"
+       inputmode="decimal"
+       {% if not has_balance or not check %}required{% else %}readonly{% endif %}><input type="hidden"
+       name="account_index_{{ account }}"
+       value="{{ forloop.counter0 }}">{% endwith %}</label>{% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        {% if balance_checks %}<section class="panel form-panel"><div class="panel-heading"><div><h2>Verifica dei saldi progressivi</h2></div></div><div class="balance-checks">
+            {% for account,check in balance_checks.items %}<div class="notice {% if check.consistent and check.matches_existing != False %}notice-success{% else %}notice-warning{% endif %}"><strong>{{ account }}:</strong> apertura dedotta {{ check.opening|euro }}. {% if check.consistent %}I saldi del file sono coerenti tra loro.{% else %}I saldi progressivi del file non coincidono con la progressione dei movimenti.{% endif %} {% if check.will_set %}Il conto è vuoto: l’apertura verrà impostata automaticamente sul valore dedotto.{% elif check.matches_existing == True %}Il valore coincide con il saldo già registrato ({{ check.existing_balance|euro }}).{% elif check.matches_existing == False %}Il saldo attualmente registrato prima del primo movimento è {{ check.existing_balance|euro }}: è diversa dall’apertura dedotta; verifica la configurazione del conto.{% endif %}</div>{% endfor %}
+            </div>
+            </section>
+        {% endif %}
+        <section class="panel table-panel">
+            <div class="panel-heading">
+                <div>
+                    <h2>Anteprima dettagliata</h2>
+                </div>
+                <button class="button button-quiet button-small"
+                        type="submit"
+                        form="cancel-import"
+                        formnovalidate>Annulla importazione</button>
+            </div>
+            <div class="table-wrap import-review-wrap">
+                <table class="review-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Esito / problemi</th>
+                            <th>Data</th>
+                            <th>Ora</th>
+                            <th>Descrizione</th>
+                            <th>Importo</th>
+                            <th>Conto/carta</th>
+                            <th>Sottocategoria / tipo</th>
+                            <th>Saldo file</th>
+                            <th>Inclusione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}<tr class="row-{{ row.status }}"><td>{{ forloop.counter }}</td><td><span class="status-badge status-{{ row.status }}">{% if row.status == "ok" %}Pronta{% elif row.status == "duplicato" %}Duplicato{% else %}Da correggere{% endif %}</span>{% for error in row.errors %}<small class="validation-note error-note">{{ error }}</small>{% endfor %}{% for warning in row.warnings %}<small class="validation-note warning-note">{{ warning }}</small>{% endfor %}{% if row.duplicate_reason %}<small class="validation-note warning-note">{{ row.duplicate_reason }}</small>{% endif %}</td><td><input class="review-input date-review"
+       type="date"
+       name="date_{{ row.row }}"
+       value="{{ row.date }}"></td><td><input class="review-input time-review"
+       type="time"
+       name="time_{{ row.row }}"
+       value="{{ row.operation_time|slice:':5' }}"></td><td><input class="review-input"
+       name="description_{{ row.row }}"
+       value="{{ row.description }}"></td><td><input class="review-input amount-review"
+       name="amount_{{ row.row }}"
+       value="{{ row.amount }}"
+       inputmode="decimal"></td><td><input class="review-input"
+       name="account_{{ row.row }}"
+       value="{{ row.account_name }}"></td><td><select class="review-select" name="subcategory_{{ row.row }}"><option value="">Seleziona…</option>{% for sub in subcategories %}<option value="{{ sub.id }}"
+        {% if row.subcategory_id|stringformat:'s' == sub.id|stringformat:'s' %}selected{% endif %}>{{ sub.category.name }} · {{ sub.name }} — {{ sub.kind }}</option>{% endfor %}</select></td><td>{{ row.balance|default:'—' }}</td><td>{% if row.status == "duplicato" %}<label class="check-label"><input type="checkbox" name="include_duplicate_{{ row.row }}"> Importa comunque</label>{% else %}<span class="muted">Inclusa se valida</span>{% endif %}</td></tr>{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div class="confirm-row">
+            <label class="check-label">
+                <input type="checkbox" name="confirm" value="yes" required>
+                Ho controllato i dati e confermo l’importazione.</label><button class="button button-primary"
+        type="submit">Conferma e salva</button>
+        </div>
+    </form>
+{% endblock %}

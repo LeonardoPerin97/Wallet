@@ -1,0 +1,40 @@
+{% extends "wallet/base.html" %}{% load wallet_tags %}{% block title %}Dashboard{% endblock %}{% block content %}
+<div class="page-heading"><div><h1>Dashboard</h1></div>{% include "wallet/components/new_button.html" %}</div>
+<section class="balance-card">
+    <div><span class="hero-label">Saldo attuale</span><strong>{{ current|euro }}</strong><span class="hero-meta">{{ account_label }} <i>·</i> Aggiornato al {{ today_label }}</span></div>
+    <div class="hero-right">
+        <span class="wallet-outline">
+            <svg>
+                <use href="#i-wallet" />
+            </svg>
+        </span>
+    </div>
+</section>
+{% include "wallet/components/filters.html" %}
+{% include "wallet/components/kpis.html" %}
+<section class="panel"><div class="panel-heading"><div><h2>Andamento del saldo</h2></div><div class="segments">{% for code,label in periods %}<button type="button"
+        data-global-period="{{ code }}"
+        class="{% if period == code %}selected{% endif %}">{{ label }}</button>{% endfor %}</div></div><div id="daily-chart"
+     class="chart"
+     data-chart="daily"
+     role="img"
+     aria-label="Andamento giornaliero del saldo"></div></section>
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Entrate e uscite mensili</h2>
+        </div>
+        <div class="segments" aria-label="Suddivisione flussi">
+            <button class="selected" data-flow="totale">Totale</button><button data-flow="tipo">Tipo</button><button data-flow="categoria">Categoria</button>
+        </div>
+    </div>
+    <div class="chart"
+         data-chart="flows"
+         role="img"
+         aria-label="Entrate e uscite mensili"></div>
+</section>
+<section class="panel"><div class="panel-heading"><div><h2>Andamento netto mensile</h2></div></div><div class="chart short-chart"
+     data-chart="net"
+     role="img"
+     aria-label="Differenza netta mensile"></div><details class="table-disclosure"><summary>Mostra i valori mensili</summary><div class="table-wrap"><table><thead><tr><th>Mese</th><th class="numeric">Entrate</th><th class="numeric">Uscite</th><th class="numeric">Netto</th></tr></thead><tbody>{% for row in monthly_flow_data %}<tr><td>{{ row.month|date:'m/Y' }}</td><td class="numeric">{{ row.income|euro }}</td><td class="numeric">{{ row.outgoing|euro }}</td><td class="numeric">{{ row.net|euro }}</td></tr>{% endfor %}</tbody></table></div></details></section>
+{{ charts|json_script:'chart-data' }}{% endblock %}

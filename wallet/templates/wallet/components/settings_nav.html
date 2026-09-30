@@ -1,0 +1,6 @@
+<nav class="settings-tabs" aria-label="Impostazioni"><a href="{% url 'settings' %}"
+   {% if request.resolver_match.url_name == 'settings' %}class="active"{% endif %}>Conti e carte</a><a href="{% url 'import' %}"
+   {% if request.resolver_match.url_name == 'import' or request.resolver_match.url_name == 'import_confirm' %}class="active"{% endif %}>Importazione</a><a href="{% url 'categories' %}"
+   {% if request.resolver_match.url_name == 'categories' %}class="active"{% endif %}>Categorie</a><a href="{% url 'backup' %}"
+   {% if request.resolver_match.url_name == 'backup' %}class="active"{% endif %}>Backup e ripristino</a><a href="{% url 'password_change' %}"
+   {% if request.resolver_match.url_name == 'password_change' or request.resolver_match.url_name == 'password_change_done' %}class="active"{% endif %}>Password</a></nav>

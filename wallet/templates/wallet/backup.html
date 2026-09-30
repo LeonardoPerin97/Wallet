@@ -1,0 +1,32 @@
+{% extends "wallet/base.html" %}
+{% block title %}Backup e ripristino{% endblock %}
+{% block content %}
+    
+    {% include "wallet/components/settings_header.html" with section_title="Backup e ripristino" %}
+    <div class="two-column-layout">
+        <section class="panel form-panel">
+            <div class="backup-icon">↓</div>
+            <h2>Crea un backup</h2>
+            <form method="post">{% csrf_token %}<input type="hidden" name="action" value="download"><button class="button button-primary" type="submit">Scarica backup Wallet</button></form>
+        </section>
+        <section class="panel form-panel">
+            <div class="backup-icon">↥</div>
+            <h2>Ripristina un backup</h2>
+            <form method="post"
+                  enctype="multipart/form-data"
+                  action="{% url 'restore_backup' %}"
+                  class="data-form"
+                  data-confirm="Il ripristino sostituirà i conti, le categorie, i movimenti e i giroconti correnti. Procedere?">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="restore">
+                <div class="field">{{ restore_form.file.label_tag }}{{ restore_form.file }}{{ restore_form.file.errors }}<small>{{ restore_form.file.help_text }}</small></div>
+                <label class="check-label">
+                    <input type="checkbox" name="confirm" value="yes" required>
+                    Confermo la sostituzione dei dati Wallet.
+                </label>
+                <button class="button button-danger" type="submit">Ripristina dati Wallet</button>
+            </form>
+        </section>
+    </div>
+    <div class="notice notice-info backup-note"><strong>Backup applicativo:</strong> il file JSON è indipendente dal motore e si può ripristinare dopo aver eseguito le migrazioni. Non include l’account di accesso. Su Northflank attiva anche i backup pianificati dell’addon PostgreSQL per avere una copia completa del database.</div>
+{% endblock %}
